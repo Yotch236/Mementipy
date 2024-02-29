@@ -5,22 +5,9 @@ def add_birthday():
     dob= input("Enter the birthday of the celebrant[mm/dd]:")
 
     try:
-        bday_month , bday_day = map(int, dob.split("/"))
-        if bday_month in [1,3,5,7,8,10,12]:
-            max_days = 31
-        elif bday_month in [4,6,9,11]:
-            max_days = 30
-        else:
-            max_days = 29
-
-        if bday_month < 1 or bday_month > 12:
-            print("Invalid Month Being Entered")
-        elif bday_day < 1 or bday_day > max_days:
-            print("Invalid Date Being Entered")
-        else:
-            with open('birthday.txt', "a") as file:
-                file.write(f"{name}, {dob}\n")
-                print("Added Birthday Celebrant Successfully")
+        with open("birthday.txt", "a") as f:
+            f.write(f"{name}, {dob}\n")
+            print("Added Celebrant Successfully")
     except ValueError:
         print("Invalid date format. Please use mm/dd format.")
 
