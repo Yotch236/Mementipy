@@ -6,13 +6,16 @@ toaster = ToastNotifier()
 
 def load_bdays(file_path):
     birthdays = {}
+    current_year = datetime.datetime.now().year #Get the current year
     with open(file_path, "r") as f:
         for line in f:
             name, dob = line.strip().split(",")
             name = name.strip()
-            dob = dob.strip()
-            birthdays[name] = datetime.datetime.strptime(dob, "%m/%d")
+            dob  = dob.strip()
+            dob_with_year = f"{dob}/{current_year}"
+            birthdays[name] = datetime.datetime.strptime(dob_with_year, "%m/%d/%Y")
     return birthdays
+            
 
 def check_bdays(birthdays):
     today = datetime.date.today()
