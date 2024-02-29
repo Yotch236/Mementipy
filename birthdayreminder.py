@@ -18,7 +18,7 @@ def check_bdays(birthdays):
     today = datetime.date.today()
     for name,dob in birthdays.items():
         if dob.month == today.month and dob.day == today.day:
-            the_title = "Birthify Notification"
+            the_title = "Mementipy Notification"
             message = f"It's {name} birthday today!"
             toaster.show_toast(title = the_title, msg = message, duration = 10)
 
