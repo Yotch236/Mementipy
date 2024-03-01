@@ -23,7 +23,7 @@ def check_bdays(birthdays):
         if dob.month == today.month and dob.day == today.day:
             the_title = "Mementipy Notification"
             message = f"Happy Birthday, {name}!"
-            toaster.show_toast(title = the_title, msg = message, duration = 5)
+            toaster.show_toast(title = the_title, msg = message, duration = 3)
 
 birthdays = load_bdays("birthday.txt")
 check_bdays(birthdays)
