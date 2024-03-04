@@ -31,7 +31,7 @@ def list_birthdays():
             parts = line.strip().split(",")
             if len(parts) == 2:
                 name, dob = parts
-                print(f"{name} bday is on {dob}")
+                print(f"{name} birthday is on {dob}")
             else:
                 print("Invalid date format in file")
 
