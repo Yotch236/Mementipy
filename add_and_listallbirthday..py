@@ -68,7 +68,7 @@ while(True):
     elif ch == 3:
         os._exit(0)
     else:
-        print("Invalid input. Please Enter [1-4]")
+        print("Invalid input. Please Enter [1-3]")
         if input("Return To Menu[y/n]:") !='y':
             break
             os.system("cls")
