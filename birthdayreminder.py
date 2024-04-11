@@ -3,9 +3,10 @@ from win10toast import ToastNotifier
 
 toaster = ToastNotifier()
 
+
 def load_bdays(file_path):
     birthdays = {}
-    current_year = datetime.datetime.now().year #Get the current year
+    current_year = datetime.datetime.now().year  # Get the current year
     with open(file_path, "r") as f:
         for line in f:
             name, dob = line.strip().split(",")
@@ -20,6 +21,7 @@ def load_bdays(file_path):
                 birthdays[dob_month_day] = [name]
     return birthdays
 
+
 def check_bdays(birthdays):
     today = datetime.date.today()
     today_month_day = (today.month, today.day)
@@ -27,13 +29,14 @@ def check_bdays(birthdays):
         celebrants = birthdays[today_month_day]
         if len(celebrants) > 1:
             the_title = "Mementipy Notification"
-            message = f"The following celebrants share the birthday today:\n"
+            message = f"This following celebrants share this birthday today:\n"
             for name in celebrants:
                 message += f"{name}\n"
         else:
             the_title = "Mementipy Notification"
             message = f"Happy Birthday to {celebrants[0]} today!!"
         toaster.show_toast(title=the_title, msg=message, duration=10)
+
 
 birthdays = load_bdays("birthday.txt")
 check_bdays(birthdays)
