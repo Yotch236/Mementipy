@@ -1,5 +1,5 @@
 import os
-from datetime import date
+from datetime import date, datetime
 
 
 def clear_screen():
@@ -28,13 +28,43 @@ def list_birthdays():
             birthdays = file.readlines()
             if not birthdays:
                 print("No birthdays found.")
+                return
+            
+            # Parse and sort birthdays
+            birthday_list = []
             for line in birthdays:
                 parts = line.strip().split(", ")
                 if len(parts) == 2:
                     name, dob = parts
-                    print(f"{name}'s birthday is on {dob}")
+                    birthday_list.append((name, dob))
                 else:
                     print("Invalid entry format in file")
+
+            birthday_list.sort(key=lambda x: x[0])  # Sort by name
+
+            # Option to filter by date
+            filter_date = input("Do you want to filter by date [mm/dd]? (Press Enter to skip): ")
+            if filter_date:
+                try:
+                    filter_month, filter_day = map(int, filter_date.split("/"))
+                    filtered_birthdays = [
+                        (name, dob) for name, dob in birthday_list 
+                        if datetime.strptime(dob, "%m/%d/%Y").month == filter_month and
+                           datetime.strptime(dob, "%m/%d/%Y").day == filter_day
+                    ]
+                except ValueError:
+                    print("Invalid date format. Please use mm/dd format.")
+                    return
+            else:
+                clear_screen()
+                filtered_birthdays = birthday_list
+
+            # Display birthdays
+            if not filtered_birthdays:
+                print("No birthdays found for the given date.")
+            else:
+                for name, dob in filtered_birthdays:
+                    print(f"{name}'s birthday is on {dob}")
     except FileNotFoundError:
         print("No birthday file found. Please add a birthday first.")
 
