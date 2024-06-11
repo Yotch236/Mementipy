@@ -68,6 +68,25 @@ def list_birthdays():
     except FileNotFoundError:
         print("No birthday file found. Please add a birthday first.")
 
+def Delete_Birthday_Celebrant():
+    try:
+        with open("birthday.txt", "r") as file:
+            lines = file.readlines()
+
+
+        celebrant_name_todelete = input("Enter the name of the birthday celebrant to delete:")
+
+        with open("birthday.txt", "w") as f:
+            for line in lines:
+                if celebrant_name_todelete not in line:
+                    f.write(line)
+        print(f"{celebrant_name_todelete} has been deleted from the birthday list")
+
+    except FileNotFoundError:
+        print("The file does not exist.")
+    except Exception as e:
+        print("An error occurred:", e)            
+
 
 def main():
     while True:
@@ -77,13 +96,14 @@ def main():
         print("----------------------------------")
         print("           1. Add Birthday")
         print("           2. List All Birthdays")
-        print("           3. Exit")
+        print("           3. Delete an Birthday Celebrant ")
+        print("           4. Exit")
         print("----------------------------------")
 
         try:
-            choice = int(input("Enter choice [1-3]: "))
+            choice = int(input("Enter choice [1-4]: "))
         except ValueError:
-            print("Invalid input. Please enter a number between 1 and 3.")
+            print("Invalid input. Please enter a number 1-4.")
             input("Press Enter to continue...")
             continue
 
@@ -105,8 +125,16 @@ def main():
             if input("Return To Menu [y/n]: ").lower() != "y":
                 break
         elif choice == 3:
-            print("Exiting...")
-            break
+            clear_screen()
+            print("-----------------------------")
+            print("  DELETE BIRTHDAY CELEBRANT")
+            print("-----------------------------")
+            Delete_Birthday_Celebrant()
+            print("-----------------------------")
+            if input("Return To Menu [y/n]: ").lower()!= "y":
+                break
+        elif choice == 4:
+            exit()
         else:
             print("Invalid choice. Please enter a number between 1 and 3.")
             input("Press Enter to continue...")

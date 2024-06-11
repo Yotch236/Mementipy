@@ -1,5 +1,4 @@
 John Dayos, 01/23/2001
-Niel Dayos, 10/06/2006
 Agnes Dayos, 12/18/1971
 Darry Dayos, 04/28/1971
 Bea, 05/30/2023
@@ -11,3 +10,4 @@ Jerome Saulo, 03/29/2000
 Carla Dela Peña , 06/19/2001
 Jimberly Fortuno, 06/25/2001
 Jellena Carmela Dayos, 06/02/2007
+Niel Dayos, 10/06/2006
