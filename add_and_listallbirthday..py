@@ -29,8 +29,7 @@ def list_birthdays():
             if not birthdays:
                 print("No birthdays found.")
                 return
-            
-            # Parse and sort birthdays
+
             birthday_list = []
             for line in birthdays:
                 parts = line.strip().split(", ")
@@ -40,7 +39,14 @@ def list_birthdays():
                 else:
                     print("Invalid entry format in file")
 
-            birthday_list.sort(key=lambda x: x[0])  # Sort by name
+            # Choose sorting option
+            sort_choice = input("Sort by (1) Name or (2) Date? [1/2]: ")
+            if sort_choice == "2":
+                # Sort by upcoming birthday (month, day)
+                birthday_list.sort(key=lambda x: (int(x[1].split("/")[0]), int(x[1].split("/")[1])))
+            else:
+                # Default to sorting by name
+                birthday_list.sort(key=lambda x: x[0])
 
             # Option to filter by date
             filter_date = input("Do you want to filter by date [mm/dd]? (Press Enter to skip): ")
@@ -48,7 +54,7 @@ def list_birthdays():
                 try:
                     filter_month, filter_day = map(int, filter_date.split("/"))
                     filtered_birthdays = [
-                        (name, dob) for name, dob in birthday_list 
+                        (name, dob) for name, dob in birthday_list
                         if datetime.strptime(dob, "%m/%d/%Y").month == filter_month and
                            datetime.strptime(dob, "%m/%d/%Y").day == filter_day
                     ]
@@ -56,7 +62,6 @@ def list_birthdays():
                     print("Invalid date format. Please use mm/dd format.")
                     return
             else:
-                clear_screen()
                 filtered_birthdays = birthday_list
 
             # Display birthdays
@@ -67,6 +72,7 @@ def list_birthdays():
                     print(f"{name}'s birthday is on {dob}")
     except FileNotFoundError:
         print("No birthday file found. Please add a birthday first.")
+
 
 def Delete_Birthday_Celebrant():
     try:
