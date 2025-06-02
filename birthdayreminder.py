@@ -1,7 +1,8 @@
 import datetime
-from win10toast import ToastNotifier
+from win10toast_click import ToastNotifier
 
 toaster = ToastNotifier()
+ICON_PATH = None
 
 def load_bdays(file_path):
     birthdays = {}
@@ -48,7 +49,7 @@ def check_bdays(birthdays):
                 suffix = "th"
             the_title = "Mementipy Notification"
             message = f"Happy {age}{suffix} Birthday to {name} today!!"
-        toaster.show_toast(title=the_title, msg=message, duration=10)
+        toaster.show_toast(title=the_title, msg=message,icon_path=ICON_PATH, duration=10, threaded= True)
 
 # Example usage
 birthdays = load_bdays("birthday.txt")
