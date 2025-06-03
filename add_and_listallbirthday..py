@@ -21,7 +21,6 @@ def add_birthday():
     except ValueError:
         print("Invalid date. Please use mm/dd/yyyy format and ensure it's a real date.")
 
-
 def list_birthdays():
     try:
         with open("birthday.txt", "r") as file:
@@ -40,39 +39,73 @@ def list_birthdays():
                     print("Invalid entry format in file")
 
             # Choose sorting option
-            sort_choice = input("Sort by (1) Name or (2) Date? [1/2]: ")
+            sort_choice = input("Sort by (1) Name, (2) Month, (3) Day, or (4) Year? [1/2/3/4]: ")
+
             if sort_choice == "2":
-                # Sort by upcoming birthday (month, day)
-                birthday_list.sort(key=lambda x: (int(x[1].split("/")[0]), int(x[1].split("/")[1])))
+                # Sort by month
+                birthday_list.sort(key=lambda x: datetime.strptime(x[1], "%m/%d/%Y").month)
+            elif sort_choice == "3":
+                # Sort by day
+                birthday_list.sort(key=lambda x: datetime.strptime(x[1], "%m/%d/%Y").day)
+            elif sort_choice == "4":
+                # Sort by year
+                birthday_list.sort(key=lambda x: datetime.strptime(x[1], "%m/%d/%Y").year)
             else:
                 # Default to sorting by name
                 birthday_list.sort(key=lambda x: x[0])
 
             # Option to filter by date
-            filter_date = input("Do you want to filter by date [mm/dd]? (Press Enter to skip): ")
-            if filter_date:
-                try:
-                    filter_month, filter_day = map(int, filter_date.split("/"))
-                    filtered_birthdays = [
-                        (name, dob) for name, dob in birthday_list
-                        if datetime.strptime(dob, "%m/%d/%Y").month == filter_month and
-                           datetime.strptime(dob, "%m/%d/%Y").day == filter_day
-                    ]
-                except ValueError:
-                    print("Invalid date format. Please use mm/dd format.")
-                    return
+            filter_choice = input("Do you want to filter birthdays? (y/n): ").lower()
+            if filter_choice == 'y':
+                filter_type = input("Filter by (1) Month, (2) Day, or (3) Year? [1/2/3]: ")
+                filtered_birthdays = []
+
+                if filter_type == "1":
+                    try:
+                        filter_month = int(input("Enter month (MM): "))
+                        filtered_birthdays = [
+                            (name, dob) for name, dob in birthday_list
+                            if datetime.strptime(dob, "%m/%d/%Y").month == filter_month
+                        ]
+                    except ValueError:
+                        print("Invalid month format. Please enter a number.")
+                        return
+                elif filter_type == "2":
+                    try:
+                        filter_day = int(input("Enter day (DD): "))
+                        filtered_birthdays = [
+                            (name, dob) for name, dob in birthday_list
+                            if datetime.strptime(dob, "%m/%d/%Y").day == filter_day
+                        ]
+                    except ValueError:
+                        print("Invalid day format. Please enter a number.")
+                        return
+                elif filter_type == "3":
+                    try:
+                        filter_year = int(input("Enter year (YYYY): "))
+                        filtered_birthdays = [
+                            (name, dob) for name, dob in birthday_list
+                            if datetime.strptime(dob, "%m/%d/%Y").year == filter_year
+                        ]
+                    except ValueError:
+                        print("Invalid year format. Please enter a number.")
+                        return
+                else:
+                    print("Invalid filter choice.")
+                    filtered_birthdays = birthday_list # Show all if invalid filter choice
             else:
                 filtered_birthdays = birthday_list
 
+
             # Display birthdays
             if not filtered_birthdays:
-                print("No birthdays found for the given date.")
+                print("No birthdays found matching your filter.")
             else:
                 for name, dob in filtered_birthdays:
                     print(f"{name}'s birthday is on {dob}")
+
     except FileNotFoundError:
         print("No birthday file found. Please add a birthday first.")
-
 
 def Delete_Birthday_Celebrant():
     try:

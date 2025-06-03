@@ -2,7 +2,7 @@ import datetime
 from win10toast_click import ToastNotifier
 
 toaster = ToastNotifier()
-ICON_PATH = None
+ICON_PATH = None  # Set your custom icon path here if needed
 
 def load_bdays(file_path):
     birthdays = {}
@@ -23,10 +23,36 @@ def load_bdays(file_path):
         print("An error occurred:", e)
     return birthdays
 
+def notify_next_celebrant(birthdays):
+    today = datetime.date.today()
+    current_year = today.year
+    days_ahead = 1
+
+    while days_ahead <= 366:  # Max search window: 1 year
+        future_day = today + datetime.timedelta(days=days_ahead)
+        key = (future_day.month, future_day.day)
+
+        if key in birthdays:
+            celebrants = birthdays[key]
+            names = ', '.join(name for name, _ in celebrants)
+            ages = ', '.join(str(current_year - year_of_birth) for _, year_of_birth in celebrants)
+
+            date_str = future_day.strftime("%B %d")
+            message = (
+                f"Next birthday: {names} on {date_str} "
+                f"and turning {' & '.join(ages.split(', '))} years old."
+            )
+
+            toaster.show_toast("Upcoming Celebrant", message, icon_path=ICON_PATH, duration=10, threaded=True)
+            break
+
+        days_ahead += 1
+
 def check_bdays(birthdays):
     today = datetime.date.today()
     current_year = today.year
     today_month_day = (today.month, today.day)
+    
     if today_month_day in birthdays:
         celebrants = birthdays[today_month_day]
         if len(celebrants) > 1:
@@ -34,22 +60,17 @@ def check_bdays(birthdays):
             message = "The following celebrants share this birthday today:\n"
             for name, year_of_birth in celebrants:
                 age = current_year - year_of_birth
-                # Check if the age ends in 11, 12, or 13, if not, add the appropriate suffix
-                if age % 100 not in {11, 12, 13}:
-                    suffix = {1: "st", 2: "nd", 3: "rd"}.get(age % 10, "th")
-                else:
-                    suffix = "th"
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(age % 10, "th") if age % 100 not in {11, 12, 13} else "th"
                 message += f"{name} ({age}{suffix} years old)\n"
         else:
             name, year_of_birth = celebrants[0]
             age = current_year - year_of_birth
-            if age % 100 not in {11, 12, 13}:
-                suffix = {1: "st", 2: "nd", 3: "rd"}.get(age % 10, "th")
-            else:
-                suffix = "th"
+            suffix = {1: "st", 2: "nd", 3: "rd"}.get(age % 10, "th") if age % 100 not in {11, 12, 13} else "th"
             the_title = "Mementipy Notification"
             message = f"Happy {age}{suffix} Birthday to {name} today!!"
-        toaster.show_toast(title=the_title, msg=message,icon_path=ICON_PATH, duration=10, threaded= True)
+        toaster.show_toast(title=the_title, msg=message, icon_path=ICON_PATH, duration=10, threaded=True)
+    else:
+        notify_next_celebrant(birthdays)
 
 # Example usage
 birthdays = load_bdays("birthday.txt")
