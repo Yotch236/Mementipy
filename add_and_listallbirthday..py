@@ -107,6 +107,43 @@ def list_birthdays():
     except FileNotFoundError:
         print("No birthday file found. Please add a birthday first.")
 
+
+def UpdateBdayCelebrant():
+    try:
+        with open("birthday.txt", "r") as file:
+            birthday_list = [line.strip().split(",") for line in file.readlines()]
+    except FileNotFoundError:
+        print("No birthday file found. Please add a birthday first.")
+        return
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
+
+    name_to_update = input("Enter the name of the celebrant to update: ").strip()
+
+    found = False
+    for i, (name, birthday) in enumerate(birthday_list):
+        if name.lower() == name_to_update.lower():
+            new_name = input("Enter the new name: ").strip()
+            new_bday = input("Enter the new birthday [mm/dd/yyyy]: ").strip()
+
+            birthday_list[i] = [new_name, new_bday]
+            found = True
+            break
+
+    if not found:
+        print("Celebrant not found.")
+        return
+
+    try:
+        with open("birthday.txt", "w") as file:
+            for entry in birthday_list:
+                file.write(",".join(entry) + "\n")
+        print("Birthday updated successfully.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
 def Delete_Birthday_Celebrant():
     try:
         with open("birthday.txt", "r") as file:
@@ -135,14 +172,15 @@ def main():
         print("----------------------------------")
         print("           1. Add Birthday")
         print("           2. List All Birthdays")
-        print("           3. Delete an Birthday Celebrant ")
-        print("           4. Exit")
+        print("           3. Update Birthday")
+        print("           4. Delete an Birthday Celebrant ")
+        print("           5. Exit")
         print("----------------------------------")
 
         try:
-            choice = int(input("Enter choice [1-4]: "))
+            choice = int(input("Enter choice [1-5]: "))
         except ValueError:
-            print("Invalid input. Please enter a number 1-4.")
+            print("Invalid input. Please enter a number 1-5.")
             input("Press Enter to continue...")
             continue
 
@@ -163,7 +201,18 @@ def main():
             print("----------------------------")
             if input("Return To Menu [y/n]: ").lower() != "y":
                 break
+        
         elif choice == 3:
+            clear_screen()
+            print("-----------------------------")
+            print("  UPDATE BIRTHDAY CELEBRANT")
+            print("-----------------------------")
+            UpdateBdayCelebrant()
+            print("-----------------------------")
+            if input("Return To Menu [y/n]: ").lower() != "y":
+                break
+
+        elif choice == 4:
             clear_screen()
             print("-----------------------------")
             print("  DELETE BIRTHDAY CELEBRANT")
@@ -172,10 +221,11 @@ def main():
             print("-----------------------------")
             if input("Return To Menu [y/n]: ").lower()!= "y":
                 break
-        elif choice == 4:
+
+        elif choice == 5:
             exit()
         else:
-            print("Invalid choice. Please enter a number between 1 and 3.")
+            print("Invalid choice. Please enter a number between 1 and 5.")
             input("Press Enter to continue...")
 
 if __name__ == "__main__":
