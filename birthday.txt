@@ -14,7 +14,7 @@ Belle Mariano, 06/10/2002
 Francesca Ramos, 07/13/1998
 Ate Jing, 10/30/1999
 Kuya Pogs, 07/23/1996
-Joren Mariano,06/19/1997
+Joren Mariano, 06/19/1997
 Blessie, 08/18/2004
 Abby, 08/25/2003
 Kuya El, 11/26/1991
@@ -23,3 +23,5 @@ John Dayos, 01/23/2001
 El Roi, 05/04/2004
 Derem Rivera, 06/25/1999
 Nami, 06/19/2003
+Jason,04/19/2004
+Pyolo (Papa P), 09/19/2000
