@@ -91,7 +91,6 @@ def list_birthdays():
                         print("Invalid year format. Please enter a number.")
                         return
                 else:
-                    print("Invalid filter choice.")
                     filtered_birthdays = birthday_list # Show all if invalid filter choice
             else:
                 filtered_birthdays = birthday_list
