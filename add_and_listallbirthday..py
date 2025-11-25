@@ -6,20 +6,22 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+def write_entry(file, name, dob):
+    file.write(f"{name}, {dob}\n")
+
+
 def add_birthday():
-    name = input("Enter the Celebrant Name: ")
-    dob = input("Enter the birthday of the celebrant [mm/dd/yyyy]: ")
+    name = input("Enter the Celebrant Name: ").strip()
+    dob = input("Enter the birthday [mm/dd/yyyy]: ").strip()
 
     try:
-        bday_month, bday_day, bday_year = map(int, dob.split("/"))
-        # Check if the date is valid
-        date(bday_year, bday_month, bday_day)
-
+        datetime.strptime(dob, "%m/%d/%Y")  # validate date
         with open("birthday.txt", "a") as file:
-            file.write(f"{name}, {dob}\n")
-            print("Added Birthday Celebrant Successfully")
+            write_entry(file, name, dob)
+        print("Added Birthday Celebrant Successfully")
     except ValueError:
-        print("Invalid date. Please use mm/dd/yyyy format and ensure it's a real date.")
+        print("Invalid date format. Please use mm/dd/yyyy.")
+
 
 def list_birthdays():
     try:
@@ -33,114 +35,84 @@ def list_birthdays():
             for line in birthdays:
                 parts = line.strip().split(", ")
                 if len(parts) == 2:
-                    name, dob = parts
-                    birthday_list.append((name, dob))
-                else:
-                    print("Invalid entry format in file")
+                    birthday_list.append((parts[0], parts[1]))
 
-            # Choose sorting option
-            sort_choice = input("Sort by (1) Name, (2) Month, (3) Day, or (4) Year? [1/2/3/4]: ")
+            sort_choice = input(
+                "Sort by (1) Name, (2) Month, (3) Day, (4) Year? [1/2/3/4]: "
+            )
 
             if sort_choice == "2":
-                # Sort by month
                 birthday_list.sort(key=lambda x: datetime.strptime(x[1], "%m/%d/%Y").month)
             elif sort_choice == "3":
-                # Sort by day
                 birthday_list.sort(key=lambda x: datetime.strptime(x[1], "%m/%d/%Y").day)
             elif sort_choice == "4":
-                # Sort by year
                 birthday_list.sort(key=lambda x: datetime.strptime(x[1], "%m/%d/%Y").year)
             else:
-                # Default to sorting by name
-                birthday_list.sort(key=lambda x: x[0])
+                birthday_list.sort(key=lambda x: x[0].lower())
 
-            # Option to filter by date
-            filter_choice = input("Do you want to filter birthdays? (y/n): ").lower()
-            if filter_choice == 'y':
-                filter_type = input("Filter by (1) Month, (2) Day, or (3) Year? [1/2/3]: ")
-                filtered_birthdays = []
+            # filtering
+            if input("Do you want to filter birthdays? (y/n): ").lower() == 'y':
+                filter_type = input("Filter by (1) Month, (2) Day, (3) Year? [1/2/3]: ")
 
-                if filter_type == "1":
-                    try:
-                        filter_month = int(input("Enter month (MM): "))
-                        filtered_birthdays = [
-                            (name, dob) for name, dob in birthday_list
-                            if datetime.strptime(dob, "%m/%d/%Y").month == filter_month
-                        ]
-                    except ValueError:
-                        print("Invalid month format. Please enter a number.")
-                        return
-                elif filter_type == "2":
-                    try:
-                        filter_day = int(input("Enter day (DD): "))
-                        filtered_birthdays = [
-                            (name, dob) for name, dob in birthday_list
-                            if datetime.strptime(dob, "%m/%d/%Y").day == filter_day
-                        ]
-                    except ValueError:
-                        print("Invalid day format. Please enter a number.")
-                        return
-                elif filter_type == "3":
-                    try:
-                        filter_year = int(input("Enter year (YYYY): "))
-                        filtered_birthdays = [
-                            (name, dob) for name, dob in birthday_list
-                            if datetime.strptime(dob, "%m/%d/%Y").year == filter_year
-                        ]
-                    except ValueError:
-                        print("Invalid year format. Please enter a number.")
-                        return
-                else:
-                    filtered_birthdays = birthday_list # Show all if invalid filter choice
+                try:
+                    if filter_type == "1":
+                        m = int(input("Enter month (MM): "))
+                        birthday_list = [b for b in birthday_list
+                                         if datetime.strptime(b[1], "%m/%d/%Y").month == m]
+                    elif filter_type == "2":
+                        d = int(input("Enter day (DD): "))
+                        birthday_list = [b for b in birthday_list
+                                         if datetime.strptime(b[1], "%m/%d/%Y").day == d]
+                    elif filter_type == "3":
+                        y = int(input("Enter year (YYYY): "))
+                        birthday_list = [b for b in birthday_list
+                                         if datetime.strptime(b[1], "%m/%d/%Y").year == y]
+                except ValueError:
+                    print("Invalid number input.")
+                    return
+
+            if not birthday_list:
+                print("No birthdays found.")
             else:
-                filtered_birthdays = birthday_list
-
-
-            # Display birthdays
-            if not filtered_birthdays:
-                print("No birthdays found matching your filter.")
-            else:
-                for name, dob in filtered_birthdays:
+                for name, dob in birthday_list:
                     print(f"{name}'s birthday is on {dob}")
 
     except FileNotFoundError:
-        print("No birthday file found. Please add a birthday first.")
+        print("No birthday file found. Add a birthday first.")
 
 
 def UpdateBdayCelebrant():
     try:
         with open("birthday.txt", "r") as file:
-            birthday_list = [line.strip().split(",") for line in file.readlines()]
+            birthday_list = [line.strip().split(", ") for line in file]
     except FileNotFoundError:
         print("No birthday file found. Please add a birthday first.")
         return
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return
 
-    name_to_update = input("Enter the name of the celebrant to update: ").strip()
+    name_to_update = input("Enter the name to update: ").strip()
 
-    found = False
-    for i, (name, birthday) in enumerate(birthday_list):
+    for i, (name, dob) in enumerate(birthday_list):
         if name.lower() == name_to_update.lower():
-            new_name = input("Enter the new name: ").strip()
-            new_bday = input("Enter the new birthday [mm/dd/yyyy]: ").strip()
+            new_name = input("Enter new name: ").strip()
+            new_dob = input("Enter new birthday [mm/dd/yyyy]: ").strip()
 
-            birthday_list[i] = [new_name, new_bday]
-            found = True
+            try:
+                datetime.strptime(new_dob, "%m/%d/%Y")
+            except ValueError:
+                print("Invalid date format.")
+                return
+
+            birthday_list[i] = [new_name, new_dob]
             break
-
-    if not found:
+    else:
         print("Celebrant not found.")
         return
 
-    try:
-        with open("birthday.txt", "w") as file:
-            for entry in birthday_list:
-                file.write(",".join(entry) + "\n")
-        print("Birthday updated successfully.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    with open("birthday.txt", "w") as file:
+        for name, dob in birthday_list:
+            write_entry(file, name, dob)
+
+    print("Birthday updated successfully.")
 
 
 def Delete_Birthday_Celebrant():
@@ -148,19 +120,24 @@ def Delete_Birthday_Celebrant():
         with open("birthday.txt", "r") as file:
             lines = file.readlines()
 
+        name_to_delete = input("Enter the name to delete: ").strip().lower()
 
-        celebrant_name_todelete = input("Enter the name of the birthday celebrant to delete:")
-
-        with open("birthday.txt", "w") as f:
+        with open("birthday.txt", "w") as file:
+            deleted = False
             for line in lines:
-                if celebrant_name_todelete not in line:
-                    f.write(line)
-        print(f"{celebrant_name_todelete} has been deleted from the birthday list")
+                name, dob = line.strip().split(", ")
+                if name.lower() != name_to_delete:
+                    file.write(line)
+                else:
+                    deleted = True
+
+        if deleted:
+            print(f"{name_to_delete} has been deleted.")
+        else:
+            print("Celebrant not found.")
 
     except FileNotFoundError:
-        print("The file does not exist.")
-    except Exception as e:
-        print("An error occurred:", e)            
+        print("No birthday file found.")
 
 
 def main():
@@ -169,63 +146,37 @@ def main():
         print("----------------------------------")
         print("            MEMENTIPY")
         print("----------------------------------")
-        print("           1. Add Birthday")
-        print("           2. List All Birthdays")
-        print("           3. Update Birthday")
-        print("           4. Delete an Birthday Celebrant ")
-        print("           5. Exit")
+        print("1. Add Birthday")
+        print("2. List All Birthdays")
+        print("3. Update Birthday")
+        print("4. Delete Birthday Celebrant")
+        print("5. Exit")
         print("----------------------------------")
 
-        try:
-            choice = int(input("Enter choice [1-5]: "))
-        except ValueError:
-            print("Invalid input. Please enter a number 1-5.")
-            input("Press Enter to continue...")
-            continue
+        choice = input("Enter choice [1-5]: ")
 
-        if choice == 1:
+        if choice == "1":
             clear_screen()
-            print("------------------------------")
-            print("        ADD BIRTHDAY")
-            print("------------------------------")
             add_birthday()
-            if input("Return To Menu [y/n]: ").lower() != "y":
-                break
-        elif choice == 2:
+            input("\nPress Enter to return to menu...")
+        elif choice == "2":
             clear_screen()
-            print("----------------------------")
-            print("    LIST ALL BIRTHDAYS")
-            print("----------------------------")
             list_birthdays()
-            print("----------------------------")
-            if input("Return To Menu [y/n]: ").lower() != "y":
-                break
-        
-        elif choice == 3:
+            input("\nPress Enter to return to menu...")
+        elif choice == "3":
             clear_screen()
-            print("-----------------------------")
-            print("  UPDATE BIRTHDAY CELEBRANT")
-            print("-----------------------------")
             UpdateBdayCelebrant()
-            print("-----------------------------")
-            if input("Return To Menu [y/n]: ").lower() != "y":
-                break
-
-        elif choice == 4:
+            input("\nPress Enter to return to menu...")
+        elif choice == "4":
             clear_screen()
-            print("-----------------------------")
-            print("  DELETE BIRTHDAY CELEBRANT")
-            print("-----------------------------")
             Delete_Birthday_Celebrant()
-            print("-----------------------------")
-            if input("Return To Menu [y/n]: ").lower()!= "y":
-                break
-
-        elif choice == 5:
-            exit()
+            input("\nPress Enter to return to menu...")
+        elif choice == "5":
+            break
         else:
-            print("Invalid choice. Please enter a number between 1 and 5.")
+            print("Invalid input.")
             input("Press Enter to continue...")
+
 
 if __name__ == "__main__":
     main()
